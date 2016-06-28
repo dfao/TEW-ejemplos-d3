@@ -1,0 +1,55 @@
+<!doctype html>
+
+<html>
+    <head>
+<script src="//d3js.org/d3.v3.min.js"></script>
+
+    </head>
+    <body>
+<script>
+    var width = 640,
+        height = 480;
+
+    var color = d3.scale.category20();
+    var nodes = [
+        {"name":"Topico 0","size":0.5, "heat": 5},
+        {"name":"Topico 1","size":0.7, "heat": 70},
+        {"name":"Topico 2","size":0.2, "heat": 124}];
+    var links = [
+        {"source":1,"target":0,"similarity":0.2},
+        {"source":2,"target":0,"similarity":0.2},
+        {"source":1,"target":2,"similarity":0.8}];    
+
+    var force = d3.layout.force()
+        .size([width, height]);
+
+    var svg = d3.select("body").append("svg")
+        .attr("width", width)
+        .attr("height", height);
+
+    force
+      .nodes(nodes)
+      .links(links)
+    force.linkDistance(link=>(1-link.similarity)*width/3);
+
+    force.start();
+
+    var node = svg.selectAll(".node")
+      .data(nodes)
+    .enter().append("circle")
+      .attr("class", "node")
+      .attr("r", 5)
+      .style("fill", function(d,i) { return color(i); });
+
+    node.append("title")
+      .text(function(d) { return d.name; });
+
+    force.on("tick", function() {
+       node
+        .attr("cx", d=>d.x )
+        .attr("cy", d=>d.y );
+    });
+
+</script>
+    </body>
+</html>
